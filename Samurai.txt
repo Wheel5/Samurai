@@ -1,0 +1,10 @@
+## Title: |cffd000Samur|r.|cffe675ai|r
+## Description: don't be shit
+## Author: |cc2ff19Wheels|r, |cef42ffMormo|r
+## Version: 1.0
+## APIVersion: 100030
+## SavedVariables: SamuraiSavedVars
+## DependsOn: LibAddonMenu-2.0
+
+Samurai.lua
+SamuraiUI.xml
