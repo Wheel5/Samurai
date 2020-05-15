@@ -7,4 +7,10 @@
 ## DependsOn: LibAddonMenu-2.0
 
 Samurai.lua
-SamuraiUI.xml
+
+src/NotificationObj.lua
+src/TrialObj.lua
+src/SamuraiMenu.lua
+
+UI/SamuraiUI.xml
+UI/SamuraiUI.lua
