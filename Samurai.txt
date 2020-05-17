@@ -4,7 +4,7 @@
 ## Version: 1.0
 ## APIVersion: 100030
 ## SavedVariables: SamuraiSavedVars
-## DependsOn: LibAddonMenu-2.0
+## DependsOn: LibAddonMenu-2.0 LibUnits2
 
 Samurai.lua
 
@@ -14,3 +14,5 @@ src/SamuraiMenu.lua
 
 UI/SamuraiUI.xml
 UI/SamuraiUI.lua
+
+testHarness.lua
