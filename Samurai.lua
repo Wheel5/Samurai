@@ -22,7 +22,12 @@ function sam.init(e, addon)
 	if addon ~= sam.name then return end -- make sure we're loading this addon
 	EM:UnregisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED) -- we're loaded, unregister
 	SLASH_COMMANDS["/samurai"] = sam.testObjects -- register slash command for the test function
+	sam.buildDisplay()
+	SLASH_COMMANDS["/spawnframetest"] = sam.UI.getAvailableNotificationFrame
+	sam.buildMenu()
+	sam.setupTestHarness()
 end
 
 -- register addon load
 EM:RegisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED, sam.init)
+

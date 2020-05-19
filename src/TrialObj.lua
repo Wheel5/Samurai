@@ -5,8 +5,8 @@ sam.MasterTrial = ZO_Object:Subclass() -- make our object
 
 local var2 = "static var" -- equivalent to static in java and such
 
-function sam.MasterTrial:New(objnum, var1) -- when called with a :, functions silently pass 'self' as the first var
-	local trial = ZO_Object.New(self) -- with a ., you have to pass self manually
+function sam.MasterTrial:New(objnum, var1) -- when called with a : functions silently pass 'self' as the first var
+	local trial = ZO_Object.New(self) -- with a . you have to pass self manually
 	trial:Initialize(objnum, var1)
 	return trial
 end
