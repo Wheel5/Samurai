@@ -6,7 +6,7 @@ local EM = GetEventManager() -- local copy of event manager
 sam.name = "Samurai"
 sam.version = "1.0"
 
-sam.debug = false
+sam.dbug = false
 
 sam.LUNITS = LibUnits2
 
@@ -15,7 +15,7 @@ sam.defaults = { } -- used for saved vars eventually
 sam.instances = { }
 
 function sam.debug(message, ...)
-	if not sam.debug then return end
+	if not sam.dbug then return end
 	df("[Samurai]: %s", message:format(...))
 end
 
@@ -31,9 +31,11 @@ end
 
 local function slash(args)
 	if args == "debug 1" then
-		sam.debug = true
+		sam.dbug = true
+		sam.debug("|c00FF00enabling|r debug mode")
 	elseif args == "debug 0" then
-		sam.debug = false
+		sam.debug("|cFF0000disabling|r debug mode")
+		sam.dbug = false
 	end
 end
 
@@ -53,6 +55,7 @@ function sam.init(e, addon)
 	if addon ~= sam.name then return end -- make sure we're loading this addon
 	EM:UnregisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED) -- we're loaded, unregister
 	--SLASH_COMMANDS["/samurai"] = sam.testObjects -- register slash command for the test function
+	SLASH_COMMANDS["/samurai"] = slash
 	sam.buildDisplay()
 	--SLASH_COMMANDS["/spawnframetest"] = sam.UI.getAvailableNotificationFrame
 	sam.buildMenu()

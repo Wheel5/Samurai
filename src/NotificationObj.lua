@@ -71,12 +71,13 @@ function sam.Notification:New()
 	return noti
 end
 
-function sam.Notification:InitializeParent(name, color, event, IDs, text)
+function sam.Notification:InitializeParent(name, color, event, result, IDs, text)
 	self.name = name
 	self.color = color
 	self.event = event
 	self.IDs = IDs
 	self.text = text
+	self.result = result
 	
 end
 
@@ -84,14 +85,14 @@ end
 -- TIMED ALERT OBJECT
 sam.TimerNotification = sam.Notification:Subclass()
 
-function sam.TimerNotification:New(name, color, text, event, IDs, targetPlayer)
+function sam.TimerNotification:New(name, color, text, event, result, IDs, targetPlayer)
 	local timer = ZO_Object.New(self)
-	timer:Initialize(name, color, text, event, IDs, targetPlayer)
+	timer:Initialize(name, color, text, event, result, IDs, targetPlayer)
 	return timer
 end
 
-function sam.TimerNotification:Initialize(name, color, text, event, IDs, targetPlayer)
-	self:InitializeParent(name, color, event, IDs, text)
+function sam.TimerNotification:Initialize(name, color, text, event, result, IDs, targetPlayer)
+	self:InitializeParent(name, color, event, result, IDs, text)
 	self.targetPlayer = targetPlayer
 	--self.text = text
 end
@@ -99,9 +100,8 @@ end
 function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 	sam.debug("handler fired for %s, targetPlayer is %s", self.name, tostring(self.targetPlayer))
 	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 100 then return end
-	sam.debug("passed")
 
-	if result == ACTION_RESULT_BEGIN then
+	if result == self.result then
 		for k,v in ipairs(timedAttackListMaster) do
 			if string.find(v[1], self.text) then
 				sam.debug("found attack for %s", self.name)
@@ -118,7 +118,7 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 end
 
 function sam.TimerNotification:Register()
-	sam.debug("registering alert with text: %s", self.text)
+	sam.debug("registering timed alert with text: %s", self.text)
 	local function wrapper(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 		self:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 	end
@@ -148,14 +148,14 @@ end
 sam.ActiveNotification = sam.Notification:Subclass()
 
 -- for now, we will pass the appropriate handler function as a parameter for anything complex
-function sam.ActiveNotification:New(customRegister, customUnregister, name, color, event, IDs, text, duration, targetPlayer)
+function sam.ActiveNotification:New(customRegister, customUnregister, name, color, event, result, IDs, text, duration, targetPlayer)
 	local alert = ZO_Object.New(self)
-	alert:Initialize(customRegister, customUnregister, name, color, event, IDs, text, duration, targetPlayer)
+	alert:Initialize(customRegister, customUnregister, name, color, event, result, IDs, text, duration, targetPlayer)
 	return alert
 end
 
-function sam.ActiveNotification:Initialize(customRegister, customUnregister, name, color, event, IDs, text, duration, targetPlayer)
-	self:InitializeParent(name, color, event, IDs, text)
+function sam.ActiveNotification:Initialize(customRegister, customUnregister, name, color, event, result, IDs, text, duration, targetPlayer)
+	self:InitializeParent(name, color, event, result, IDs, text)
 	--self.text = text
 	self.duration = duration
 	self.targetPlayer = targetPlayer -- true if we are only listening to direct player attacks
@@ -169,10 +169,9 @@ function sam.ActiveNotification:Initialize(customRegister, customUnregister, nam
 end
 
 function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-	sam.debug("firing active handler for %s", self.name)
+	sam.debug("firing active handler for %s, result is %d", self.name, result)
 	if self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
-	sam.debug("passed")
-	if result == ACTION_RESULT_BEGIN then
+	if result == self.result then
 		self.alertCounter = self.alertCounter + 1
 		if not self.displaying then -- don't double display a noti in case of fast-firing events
 			self.currentFrame = sam.UI.getAvailableNotificationFrame()
@@ -198,6 +197,7 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 end
 
 function sam.ActiveNotification:Register()
+	sam.debug("registering active alert with text: %s", self.text)
 	if self.customRegister then
 		self.customRegister()
 	else
