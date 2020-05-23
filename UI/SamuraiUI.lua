@@ -16,12 +16,21 @@ end
 
 function sam.UI.getAvailableNotificationFrame()
 	for num,frame in ipairs(sam.UI.activeAlerts) do
-		if frame:IsHidden() then
-			frame:SetHidden(false)
+		if frame:IsControlHidden() then
+			--frame:SetHidden(false)
 			return num
 		end
 	end
 	return sam.UI.spawnNotificationFrame()
+end
+
+function sam.UI.displayAlert(frameNum, formattedMessage)
+	sam.UI.activeAlerts[frameNum]:SetText(formattedMessage)
+	sam.UI.activeAlerts[frameNum]:SetHidden(false)
+end
+
+function sam.UI.hideAlert(frameNum)
+	sam.UI.activeAlerts[frameNum]:SetHidden(true)
 end
 
 function sam.UI.setHudDisplay(value)
@@ -54,7 +63,9 @@ function sam.buildDisplay()
 	noti1:SetText("Notification #1")
 
 	local timedAlert = WM:CreateControlFromVirtual("SAMURAI_TIMED_ALERT", window, "NotificationTemplate")
-	timedAlert:SetAnchor(CENTER, window, CENTER, 0, -100)
+	timedAlert:SetAnchor(TOP, window, CENTER, 0, -120)
+	timedAlert:SetFont("$(BOLD_FONT)|$(KB_32)|thick-outline")
+	timedAlert:SetColor(1, 1, .25)
 	timedAlert:SetText("Timer Notification")
 
 	sam.UI.window = window
