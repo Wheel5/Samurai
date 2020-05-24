@@ -10,13 +10,13 @@ local th = TEST_HARNESS
 
 function th.registerNotiTest()
 	d("creating...")
-	th.noti1 = sam.TimerNotification:New("test1", "FFCC00", "Test 1", EVENT_COMBAT_EVENT, {999999}, true)
-	th.noti2 = sam.TimerNotification:New("test2", "00FF00", "Test 2", EVENT_COMBAT_EVENT, {1000000}, true)
-	th.noti3 = sam.TimerNotification:New("test3", "0000FF", "Test 3", EVENT_COMBAT_EVENT, {1000001}, false)
+	th.noti1 = sam.TimerNotification:New("test1", "FFCC00", "Test 1", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {999999}, true)
+	th.noti2 = sam.TimerNotification:New("test2", "00FF00", "Test 2", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {1000000}, true)
+	th.noti3 = sam.TimerNotification:New("test3", "0000FF", "Test 3", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {1000001}, false)
 
-	th.a = sam.ActiveNotification:New(nil, nil, "testA", "FFCB00", EVENT_COMBAT_EVENT, {100000000000}, "Test Alert A", 3000, true)
-	th.b = sam.ActiveNotification:New(nil, nil, "testB", "FFCB00", EVENT_COMBAT_EVENT, {100000000001}, "Test Alert B", 5000, true)
-	th.c = sam.ActiveNotification:New(nil, nil, "testC", "FFCB00", EVENT_COMBAT_EVENT, {100000000002}, "Test Alert C", 3000, true)
+	th.a = sam.ActiveNotification:New(nil, nil, "testA", "FFCB00", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {100000000000}, "Test Alert A", 3000, true)
+	th.b = sam.ActiveNotification:New(nil, nil, "testB", "FFCB00", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {100000000001}, "Test Alert B", 5000, true)
+	th.c = sam.ActiveNotification:New(nil, nil, "testC", "FFCB00", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {100000000002}, "Test Alert C", 3000, true)
 
 	d("registering...")
 	th.noti1:Register()
