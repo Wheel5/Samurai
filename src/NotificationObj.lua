@@ -9,6 +9,8 @@ local timedAttackListMaster = { }
 -- innermost table will be updated with times
 -- attack table with be added or removed on registration
 
+-- TODO: make sure when unregistering notifications in instances, we don't wipe out general notifications (or reregister if needed)
+
 local function formatTimedAttackList()
 	local countdownList = {}
 	local countdownListFormatted = {}
