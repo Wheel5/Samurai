@@ -9,7 +9,6 @@ local timedAttackListMaster = { }
 -- innermost table will be updated with times
 -- attack table with be added or removed on registration
 
--- TODO: make sure when unregistering notifications in instances, we don't wipe out general notifications (or reregister if needed)
 
 local function formatTimedAttackList()
 	local countdownList = {}
@@ -21,8 +20,8 @@ local function formatTimedAttackList()
 		local formattedSubList = { }
 		local subListString = ""
 		for key, value in ipairs(subList[3]) do
-			if value > t then
-				table.insert(countdownSubList, value - t)
+			if value[1] > t then
+				table.insert(countdownSubList, value[1] - t)
 			end
 		end
 
@@ -59,10 +58,31 @@ local function timedAttackCounter()
 	end
 end
 
--- Adds notification to available frame or spawns new one if needed
-local function displayNoti()
+local function removeAttackFromDeadUnit(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	if result == ACTION_RESULT_DIED or result == ACTION_RESULT_DIED_XP or result == ACTION_RESULT_INTERRUPT then -- wtfffff
+		sam.debug("unit with targetID %d died or interrupted", targetUnitId)
+		for k,v in pairs(timedAttackListMaster) do
+			for x,y in pairs(v[3]) do
+				if y[2] == targetUnitId then
+					sam.debug("unit ID matched, removing from list...")
+					y[1] = 0
+				end
+			end
+		end
+	end
 end
 
+EM:RegisterForEvent(sam.name.."UnitDied", EVENT_COMBAT_EVENT, removeAttackFromDeadUnit) -- not sure this actually works yet
+
+local function clearMasterTable(e, inCombat)
+	if inCombat then return end
+	sam.debug("cleaning timed attack list master table")
+	for k,v in pairs(timedAttackListMaster) do
+		timedAttackListMaster[k][3] = { }
+	end
+end
+
+EM:RegisterForEvent(sam.name.."clearTable", EVENT_PLAYER_COMBAT_STATE, clearMasterTable)
 
 -- NOTIFICATION OBJECT PARENT
 sam.Notification = ZO_Object:Subclass()
@@ -80,7 +100,6 @@ function sam.Notification:InitializeParent(name, color, event, result, IDs, text
 	self.IDs = IDs
 	self.text = text
 	self.result = result
-	
 end
 
 
@@ -96,10 +115,13 @@ end
 function sam.TimerNotification:Initialize(name, color, text, event, result, IDs, targetPlayer)
 	self:InitializeParent(name, color, event, result, IDs, text)
 	self.targetPlayer = targetPlayer
-	--self.text = text
 end
 
 function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	if not sam.savedVars.notis[self.name] then
+		sam.debug("skipping %s", self.name)
+		return
+	end
 	sam.debug("handler fired for %s, targetPlayer is %s", self.name, tostring(self.targetPlayer))
 	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 100 then return end
 
@@ -107,7 +129,7 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 		for k,v in ipairs(timedAttackListMaster) do
 			if string.find(v[1], self.text) then
 				sam.debug("found attack for %s", self.name)
-				table.insert(v[3], GetGameTimeMilliseconds() + hitValue)
+				table.insert(v[3], {GetGameTimeMilliseconds() + hitValue, targetUnitId})
 			end
 		end
 		timedAttackCounter()
@@ -120,6 +142,10 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 end
 
 function sam.TimerNotification:Register()
+	--if not sam.savedVars.notis[self.name] then
+	--	sam.debug("skipping %s", self.name)
+	--	return
+	--end
 	sam.debug("registering timed alert with text: %s", self.text)
 	local function wrapper(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 		self:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
@@ -141,7 +167,7 @@ function sam.TimerNotification:Unregister()
 	end
 	sam.UI.timedAlert:SetHidden(true)
 	for k in pairs(timedAttackListMaster) do
-		timedAttackListMaster[k] = nil
+		timedAttackListMaster[k][3] = { }
 	end
 end
 
@@ -158,10 +184,8 @@ end
 
 function sam.ActiveNotification:Initialize(customRegister, customUnregister, name, color, event, result, IDs, text, duration, targetPlayer)
 	self:InitializeParent(name, color, event, result, IDs, text)
-	--self.text = text
 	self.duration = duration
 	self.targetPlayer = targetPlayer -- true if we are only listening to direct player attacks
-	--self.customHandler = customHandler 
 	self.customRegister = customRegister -- for handling more complex alerts...
 	self.customUnregister = customUnregister -- we just (un)register custom external handlers
 
@@ -171,6 +195,10 @@ function sam.ActiveNotification:Initialize(customRegister, customUnregister, nam
 end
 
 function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	if not sam.savedVars.notis[self.name] then
+		sam.debug("skipping %s", self.name)
+		return
+	end
 	sam.debug("firing active handler for %s, result is %d", self.name, result)
 	if self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
 	if result == self.result then
@@ -180,8 +208,6 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 			self.displaying = true
 			local alertText = string.format("|c%s%s|r", self.color, self.text)
 			sam.UI.displayAlert(self.currentFrame, alertText)
-			--sam.UI.activeAlerts[self.currentFrame]:SetText(string.format("|c%s%s|r", self.color, self.text))
-			--sam.UI.activeAlerts[self.currentFrame]:SetHidden(false)
 		end
 		PlaySound(SOUNDS.CHAMPION_POINTS_COMMITTED)
 
@@ -189,7 +215,6 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 			self.alertCounter = self.alertCounter - 1
 			if self.alertCounter <= 0 then
 				self.alertCounter = 0
-				--sam.UI.activeAlerts[self.currentFrame]:SetHidden(true)
 				sam.UI.hideAlert(self.currentFrame)
 				self.displaying = false
 				self.currentFrame = -1
@@ -199,7 +224,11 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 end
 
 function sam.ActiveNotification:Register()
-	sam.debug("registering active alert with text: %s", self.text)
+	--if not sam.savedVars.notis[self.name] then
+	--	sam.debug("skipping %s", self.name)
+	--	return
+	--end
+	sam.debug("registering active alert with text: %s", tostring(self.text))
 	if self.customRegister then
 		self.customRegister()
 	else
@@ -218,15 +247,17 @@ function sam.ActiveNotification:Unregister()
 		self.customUnregister()
 	end
 	EM:UnregisterForUpdate(sam.name.."TimedAttackCountdown")
-	for k,v in pairs(self.IDs) do
-		EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
+	if self.IDs then
+	 	for k,v in pairs(self.IDs) do
+	 		EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
+	 	end
 	end
 	for k,v in pairs(sam.UI.activeAlerts) do
 		v:SetHidden(true)
 	end
 	sam.UI.timedAlert:SetHidden(true)
 	for k in pairs(timedAttackListMaster) do
-		timedAttackListMaster[k] = nil
+		timedAttackListMaster[k][3] = { }
 	end
 	self.displaying = false
 	self.currentFrame = -1

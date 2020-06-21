@@ -30,7 +30,9 @@ function sam.UI.displayAlert(frameNum, formattedMessage)
 end
 
 function sam.UI.hideAlert(frameNum)
-	sam.UI.activeAlerts[frameNum]:SetHidden(true)
+	if sam.UI.activeAlerts[frameNum] then
+		sam.UI.activeAlerts[frameNum]:SetHidden(true)
+	end
 end
 
 function sam.UI.setHudDisplay(value)

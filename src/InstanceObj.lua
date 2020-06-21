@@ -1,11 +1,11 @@
-SAMURAI = SAMURAI or { } -- get our namespace 
-local sam = SAMURAI -- local version again
+SAMURAI = SAMURAI or { }
+local sam = SAMURAI
 
-sam.Instance = ZO_Object:Subclass() -- make our object
+sam.Instance = ZO_Object:Subclass()
 
 
-function sam.Instance:New(zoneID, startCombat, reset) -- when called with a : functions silently pass 'self' as the first var
-	local instance = ZO_Object.New(self) -- with a . you have to pass self manually
+function sam.Instance:New(zoneID, startCombat, reset)
+	local instance = ZO_Object.New(self)
 	instance:Initialize(zoneID)
 	return instance
 end
@@ -44,8 +44,10 @@ end
 
 function sam.Instance:Unregister()
 	if not self.loaded then return end -- only unregister if we have already registered for this instance
+	sam.debug("unregistering zone %d", self.zoneID)
 	for k,v in pairs(self.alerts) do
 		v:Unregister()
 	end
+	self.loaded = false
 end
 

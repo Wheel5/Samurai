@@ -1,49 +1,62 @@
-SAMURAI = SAMURAI or { } -- global namespace
-local sam = SAMURAI -- local copy for efficiency
+SAMURAI = SAMURAI or { }
+local sam = SAMURAI
 
-local EM = GetEventManager() -- local copy of event manager
+local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "1.0"
+sam.version = "1.1"
 
 sam.dbug = false
 
 sam.LUNITS = LibUnits2
 
-sam.defaults = { } -- used for saved vars eventually
+sam.defaults = {
+	["debug"] = false,
+	["notis"] = {
+		["Dive"] = true,
+		["TakingAim"] = true,
+		["HeavyAttack"] = true,
+		["HeavySlash"] = true,
+		["Bash"] = true,
+		["UpperCut"] = true,
+		["AnvilCracker"] = true,
+		["CrushingBlow"] = true,
+		["Boulder"] = true,
+		["Slam"] = true,
+		["powerBash"] = true,
+		["LavaWhip"] = true,
+		["TopplingBlow"] = true,
+		["ClashofBones"] = true,
+		["DrainResource"] = true,
+		["LavaGeyser"] = true,
+		["Rake"] = true, 
+	},
+}
 
 sam.instances = { }
 
 function sam.debug(message, ...)
 	if not sam.dbug then return end
-	df("[Samurai]: %s", message:format(...))
+	df("[|cffd000Samur|r.|cffe675ai|r] %s", message:format(...))
 end
-
---function sam.testObjects()
---	local obj1 = sam.MasterTrial:New("obj1", "localvar1") -- create 2 objects with different values
---	local obj2 = sam.MasterTrial:New("obj2", "localvar2")
---	local testList = { obj1, obj2 } -- place objects in table to iterate over
---	
---	for _,o in pairs(testList) do -- polymorphism!
---		o:printInfo()
---	end
---end
 
 local function slash(args)
 	if args == "debug 1" then
 		sam.dbug = true
+		sam.savedVars.debug = true
 		sam.debug("|c00FF00enabling|r debug mode")
 	elseif args == "debug 0" then
 		sam.debug("|cFF0000disabling|r debug mode")
 		sam.dbug = false
+		sam.savedVars.debug = false
 	end
 end
 
 function sam.playerActivated()
 	local zoneID = GetZoneId(GetUnitZoneIndex("player"))
-	sam.generalAlerts:Register()
 	for k,v in pairs(sam.instances) do
-		if v:GetZoneId() == zoneID then
+		if v:getZoneID() == zoneID then
+			sam.debug("loading zone %d", zoneID)
 			v:Register()
 		else
 			v:Unregister()
@@ -52,17 +65,17 @@ function sam.playerActivated()
 end
 
 function sam.init(e, addon)
-	if addon ~= sam.name then return end -- make sure we're loading this addon
-	EM:UnregisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED) -- we're loaded, unregister
-	--SLASH_COMMANDS["/samurai"] = sam.testObjects -- register slash command for the test function
+	if addon ~= sam.name then return end
+	EM:UnregisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED)
+	sam.savedVars = ZO_SavedVars:NewCharacterIdSettings("SamuraiSavedVars", 1, "Samurai", sam.defaults, GetWorldName())
+	sam.dbug = sam.savedVars.debug
 	SLASH_COMMANDS["/samurai"] = slash
 	sam.buildDisplay()
-	--SLASH_COMMANDS["/spawnframetest"] = sam.UI.getAvailableNotificationFrame
 	sam.buildMenu()
 	sam.setupTestHarness()
 	EM:RegisterForEvent(sam.name.."playerActivate", EVENT_PLAYER_ACTIVATED, sam.playerActivated)
+	sam.generalAlerts:Register()
 end
 
--- register addon load
 EM:RegisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED, sam.init)
 

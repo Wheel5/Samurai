@@ -16,27 +16,201 @@ function sam.buildMenu()
 
 	LAM:RegisterAddonPanel(sam.name.."GeneralOptions", panelData)
 
+	local generalNotis = {
+		{
+			type = "description",
+			text = "Alerts available in all locations",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Taking Aim",
+			tooltip = "Archer taking aim alert",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.TakingAim end,
+			setFunc = function(value) sam.savedVars.notis.TakingAim = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Heavy Attack",
+			tooltip = "General heavy attack notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.HeavyAttack end,
+			setFunc = function(value) sam.savedVars.notis.HeavyAttack = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Heavy Slash",
+			tooltip = "General heavy slash notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.HeavySlash end,
+			setFunc = function(value) sam.savedVars.notis.HeavySlash = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Bash",
+			tooltip = "General bash attack notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Bash end,
+			setFunc = function(value) sam.savedVars.notis.Bash = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Uppercut",
+			tooltip = "General uppercut notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.UpperCut end,
+			setFunc = function(value) sam.savedVars.notis.UpperCut = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Anvil Cracker",
+			tooltip = "General anvil cracker notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.AnvilCracker end,
+			setFunc = function(value) sam.savedVars.notis.AnvilCracker = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Crushing Blow",
+			tooltip = "General crushing blow notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.CrushingBlow end,
+			setFunc = function(value) sam.savedVars.notis.CrushingBlow = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Boulder",
+			tooltip = "General boulder notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Boulder end,
+			setFunc = function(value) sam.savedVars.notis.Boulder = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Slam",
+			tooltip = "General slam notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Slam end,
+			setFunc = function(value) sam.savedVars.notis.Slam = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Power Bash",
+			tooltip = "General power bash notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.powerBash end,
+			setFunc = function(value) sam.savedVars.notis.powerBash = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Lava Whip",
+			tooltip = "General lava whip notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.LavaWhip end,
+			setFunc = function(value) sam.savedVars.notis.LavaWhip = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Toppling Blow",
+			tooltip = "General toppling blow notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.TopplingBlow end,
+			setFunc = function(value) sam.savedVars.notis.TopplingBlow = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Clash of Bones",
+			tooltip = "General clash of bones notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ClashofBones end,
+			setFunc = function(value) sam.savedVars.notis.ClashofBones = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Drain Resource",
+			tooltip = "General drain resource notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.DrainResource end,
+			setFunc = function(value) sam.savedVars.notis.DrainResource = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Lava Geyser",
+			tooltip = "General lava geyser notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.LavaGeyser end,
+			setFunc = function(value) sam.savedVars.notis.LavaGeyser = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Rake",
+			tooltip = "General hackwing rake notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Rake end,
+			setFunc = function(value) sam.savedVars.notis.Rake = value end,
+		},
+	}
+
+	local blackroseNotis = {
+		{
+			type = "description",
+			text = "Alerts available in Blackrose Prison",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Dive",
+			tooltip = "Hackwing dive notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Dive end,
+			setFunc = function(value) sam.savedVars.notis.Dive = value end,
+		},
+	}
+
 	local generalOptions = {
 		{
 			type = "divider",
 		},
 		{
 			type = "description",
-			text = "don't be shit",
+			text = "additional settings to be added",
 		},
 		{
 			type = "header",
 			name = "General Display Options",
 		},
+		--{
+		--	type = "checkbox",
+		--	name = "Lock Frames",
+		--	tooltip = "Unlock to position frames in desired location",
+		--	disabled = true,
+		--	getFunc = function() return lockUI end,
+		--	setFunc = function(value)
+		--		sam.UI.setHudDisplay(value)
+		--		lockUI = value
+		--	end,
+		--},
 		{
-			type = "checkbox",
-			name = "Lock Frames",
-			tooltip = "Unlock to position frames in desired location",
-			getFunc = function() return lockUI end,
-			setFunc = function(value)
-				sam.UI.setHudDisplay(value)
-				lockUI = value
-			end,
+			type = "divider",
+		},
+		{
+			type = "header",
+			name = "Notifications",
+		},
+		{
+			type = "submenu",
+			name = "General",
+			controls = generalNotis,
+		},
+		{
+			type = "submenu",
+			name = "Blackrose Prison",
+			controls = blackroseNotis,
 		},
 	}
 

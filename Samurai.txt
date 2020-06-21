@@ -1,8 +1,8 @@
 ## Title: |cffd000Samur|r.|cffe675ai|r
-## Description: don't be shit
+## Description: stop dying 4head
 ## Author: |cc2ff19Wheels|r, |cef42ffMormo|r
-## Version: 1.0
-## APIVersion: 100030
+## Version: 1.1
+## APIVersion: 100031
 ## SavedVariables: SamuraiSavedVars
 ## DependsOn: LibAddonMenu-2.0 LibUnits2
 
@@ -16,5 +16,6 @@ UI/SamuraiUI.xml
 UI/SamuraiUI.lua
 
 instances/general.lua
+instances/blackrose.lua
 
 testHarness.lua

@@ -1,6 +1,8 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 
+-- porting to this addon in progress
+
 local shieldZone = -1
 local shieldTime = 0
 
