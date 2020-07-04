@@ -15,13 +15,15 @@ local function formatTimedAttackList()
 	local countdownListFormatted = {}
 	local t = GetGameTimeMilliseconds()
 
-	for _, subList in ipairs(timedAttackListMaster) do
+	for _, subList in pairs(timedAttackListMaster) do
 		local countdownSubList = { }	
 		local formattedSubList = { }
 		local subListString = ""
-		for key, value in ipairs(subList[3]) do
+		for key, value in pairs(subList[3]) do
 			if value[1] > t then
 				table.insert(countdownSubList, value[1] - t)
+			else
+				table.remove(subList[3], key)
 			end
 		end
 
@@ -48,7 +50,7 @@ local function timedAttackCounter()
 	if not text or text == "" then
 		EM:UnregisterForUpdate(sam.name.."TimedAttackCountdown")
 		sam.UI.timedAlert:SetHidden(true)
-		for _,subList in ipairs(timedAttackListMaster) do
+		for _,subList in pairs(timedAttackListMaster) do
 			for k in pairs(subList[3]) do
 				subList[3][k] = nil
 			end
@@ -58,31 +60,67 @@ local function timedAttackCounter()
 	end
 end
 
-local function removeAttackFromDeadUnit(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-	if result == ACTION_RESULT_DIED or result == ACTION_RESULT_DIED_XP or result == ACTION_RESULT_INTERRUPT then -- wtfffff
-		sam.debug("unit with targetID %d died or interrupted", targetUnitId)
-		for k,v in pairs(timedAttackListMaster) do
-			for x,y in pairs(v[3]) do
-				if y[2] == targetUnitId then
-					sam.debug("unit ID matched, removing from list...")
-					y[1] = 0
-				end
-			end
+-- this could probably be consolidated into the handlers, and would require no loops
+local function removeCancelledAttack(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	-- debug stuff
+	--local r = ""
+	--if result == ACTION_RESULT_DIED then
+	--	r = "DIED"
+	--elseif result == ACTION_RESULT_DIED_XP then
+	--	r = "DIED_XP"
+	--elseif result == ACTION_RESULT_INTERRUPT then
+	--	r = "INTERRUPT"
+	--elseif result == ACTION_RESULT_STUNNED then
+	--	r = "STUNNED"
+	--end
+	--sam.debug("result: %s, sourceID: %d, targetID: %d", r, sourceUnitId, targetUnitId)
+	local t = GetGameTimeMilliseconds()
+	for k,v in pairs(timedAttackListMaster) do
+		if v[3][sourceUnitId] or v[3][targetUnitId] then
+			sam.debug("attempting to remove attack where source ID name is %s (%d), target ID name is %s (%d)", sam.LUNITS.GetNameForUnitId(sourceUnitId), sourceUnitId, sam.LUNITS.GetNameForUnitId(targetUnitId), targetUnitId)
 		end
+		if v[3][sourceUnitId] then sam.debug("source ID found") end
+		if v[3][targetUnitId] then sam.debug("target ID found") end
+		v[3][targetUnitId] = nil
 	end
 end
 
-EM:RegisterForEvent(sam.name.."UnitDied", EVENT_COMBAT_EVENT, removeAttackFromDeadUnit) -- not sure this actually works yet
+function sam.onStartupNotificationSetup()
+	EM:RegisterForEvent(sam.name.."UnitDied", EVENT_COMBAT_EVENT, removeCancelledAttack) -- not sure this actually works yet
+	EM:AddFilterForEvent(sam.name.."UnitDied", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DIED)
+	EM:RegisterForEvent(sam.name.."UnitDiedXP", EVENT_COMBAT_EVENT, removeCancelledAttack)
+	EM:AddFilterForEvent(sam.name.."UnitDiedXP", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DIED_XP)
+	EM:RegisterForEvent(sam.name.."UnitInterrupt", EVENT_COMBAT_EVENT, removeCancelledAttack)
+	EM:AddFilterForEvent(sam.name.."UnitInterrupt", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_INTERRUPT)
+	EM:RegisterForEvent(sam.name.."UnitStunned", EVENT_COMBAT_EVENT, removeCancelledAttack)
+	EM:AddFilterForEvent(sam.name.."UnitStunned", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_STUNNED)
+end
 
 local function clearMasterTable(e, inCombat)
 	if inCombat then return end
-	sam.debug("cleaning timed attack list master table")
+	local count = 0
 	for k,v in pairs(timedAttackListMaster) do
-		timedAttackListMaster[k][3] = { }
+		--timedAttackListMaster[k][3] = { }
+		count = count + #timedAttackListMaster[k][3]
+	end
+	if count > 0 then
+		sam.debug("|cFF0000ALERT:|r %d attacks still in master list", count)
 	end
 end
 
 EM:RegisterForEvent(sam.name.."clearTable", EVENT_PLAYER_COMBAT_STATE, clearMasterTable)
+
+function sam.masterPrint()
+	for k,v in pairs(timedAttackListMaster) do
+		sam.debug("%s: %s", tostring(k), tostring(v))
+	end
+end
+
+local newID = 0
+local function getUniqueID()
+	newID = newID - 1
+	return newID
+end
 
 -- NOTIFICATION OBJECT PARENT
 sam.Notification = ZO_Object:Subclass()
@@ -122,16 +160,14 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 		sam.debug("skipping %s", self.name)
 		return
 	end
-	sam.debug("handler fired for %s, targetPlayer is %s", self.name, tostring(self.targetPlayer))
 	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 100 then return end
+	sam.debug("handler fired for %s, targetPlayer is %s", self.name, tostring(self.targetPlayer))
 
 	if result == self.result then
-		for k,v in ipairs(timedAttackListMaster) do
-			if string.find(v[1], self.text) then
-				sam.debug("found attack for %s", self.name)
-				table.insert(v[3], {GetGameTimeMilliseconds() + hitValue, targetUnitId})
-			end
-		end
+		--if sourceUnitId == 0 then sourceUnitId = getUniqueID() end
+		if sourceUnitId == 0 then sourceUnitId = targetUnitId end
+		sam.debug("adding attack where source ID name is %s (%d), target ID name is %s (%d)", sam.LUNITS.GetNameForUnitId(sourceUnitId), sourceUnitId, sam.LUNITS.GetNameForUnitId(targetUnitId), targetUnitId)
+		timedAttackListMaster[self.name][3][sourceUnitId] = {GetGameTimeMilliseconds() + hitValue, targetUnitId}
 		timedAttackCounter()
 		sam.UI.timedAlert:SetHidden(false)
 		PlaySound(SOUNDS.CHAMPION_POINTS_COMMITTED)
@@ -142,15 +178,11 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 end
 
 function sam.TimerNotification:Register()
-	--if not sam.savedVars.notis[self.name] then
-	--	sam.debug("skipping %s", self.name)
-	--	return
-	--end
-	sam.debug("registering timed alert with text: %s", self.text)
+	sam.debug("registering timed alert with name: %s", self.name)
 	local function wrapper(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 		self:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 	end
-	table.insert(timedAttackListMaster, {self.text..": ", self.color, {} })
+	timedAttackListMaster[self.name] = {self.text..": ", self.color, {} }
 	for k,v in pairs(self.IDs) do
 		EM:RegisterForEvent(sam.name..self.name..tostring(v), self.event, wrapper)
 		EM:AddFilterForEvent(sam.name..self.name..tostring(v), self.event, REGISTER_FILTER_ABILITY_ID, v)
@@ -158,7 +190,9 @@ function sam.TimerNotification:Register()
 end
 
 function sam.TimerNotification:Unregister()
+	sam.debug("unregistering timed alert with name: %s", self.name)
 	EM:UnregisterForUpdate(sam.name.."TimedAttackCountdown")
+	timedAttackListMaster[self.name] = nil
 	for k,v in pairs(self.IDs) do
 		EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
 	end
@@ -199,8 +233,8 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 		sam.debug("skipping %s", self.name)
 		return
 	end
-	sam.debug("firing active handler for %s, result is %d", self.name, result)
 	if self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
+	sam.debug("firing active handler for %s, result is %d", self.name, result)
 	if result == self.result then
 		self.alertCounter = self.alertCounter + 1
 		if not self.displaying then -- don't double display a noti in case of fast-firing events
@@ -224,11 +258,7 @@ function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName,
 end
 
 function sam.ActiveNotification:Register()
-	--if not sam.savedVars.notis[self.name] then
-	--	sam.debug("skipping %s", self.name)
-	--	return
-	--end
-	sam.debug("registering active alert with text: %s", tostring(self.text))
+	sam.debug("registering active alert with name: %s", tostring(self.name))
 	if self.customRegister then
 		self.customRegister()
 	else
@@ -243,6 +273,7 @@ function sam.ActiveNotification:Register()
 end
 
 function sam.ActiveNotification:Unregister()
+	sam.debug("registering active alert with name: %s", tostring(self.name))
 	if self.customUnregister then
 		self.customUnregister()
 	end

@@ -44,7 +44,7 @@ end
 
 function sam.Instance:Unregister()
 	if not self.loaded then return end -- only unregister if we have already registered for this instance
-	sam.debug("unregistering zone %d", self.zoneID)
+	sam.debug("unloading zone %d", self.zoneID)
 	for k,v in pairs(self.alerts) do
 		v:Unregister()
 	end

@@ -17,5 +17,7 @@ UI/SamuraiUI.lua
 
 instances/general.lua
 instances/blackrose.lua
+instances/kynes.lua
+instances/cloudrest.lua
 
 testHarness.lua

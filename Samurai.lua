@@ -30,6 +30,14 @@ sam.defaults = {
 		["DrainResource"] = true,
 		["LavaGeyser"] = true,
 		["Rake"] = true, 
+		["WrathofTides"] = true, 
+		["CrashingWave"] = true, 
+		["ShockingSmash"] = true,
+		["DirectCurrent"] = true,
+		["NocturnalsFavor"] = true,
+		["Creeper"] = true,
+		["HeavyStrike"] = true,
+		["kaMeteor"] = true,
 	},
 }
 
@@ -49,6 +57,8 @@ local function slash(args)
 		sam.debug("|cFF0000disabling|r debug mode")
 		sam.dbug = false
 		sam.savedVars.debug = false
+	elseif args == "master" then
+		sam.masterPrint()
 	end
 end
 
@@ -73,6 +83,7 @@ function sam.init(e, addon)
 	sam.buildDisplay()
 	sam.buildMenu()
 	sam.setupTestHarness()
+	sam.onStartupNotificationSetup()
 	EM:RegisterForEvent(sam.name.."playerActivate", EVENT_PLAYER_ACTIVATED, sam.playerActivated)
 	sam.generalAlerts:Register()
 end

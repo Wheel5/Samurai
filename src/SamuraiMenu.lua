@@ -50,6 +50,14 @@ function sam.buildMenu()
 		},
 		{
 			type = "checkbox",
+			name = "Heavy Strike",
+			tooltip = "General heavy strike notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.HeavyStrike end,
+			setFunc = function(value) sam.savedVars.notis.HeavyStrike = value end,
+		},
+		{
+			type = "checkbox",
 			name = "Bash",
 			tooltip = "General bash attack notification",
 			width = "half",
@@ -172,6 +180,74 @@ function sam.buildMenu()
 		},
 	}
 
+	local kynesNotis = {
+		{
+			type = "description",
+			text = "Alerts available in Kyne's Aegis",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Wrath of Tides",
+			tooltip = "Wrath of tides notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.WrathofTides end,
+			setFunc = function(value) sam.savedVars.notis.WrathofTides = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Crashing Wave",
+			tooltip = "Crashing wave notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.CrashingWave end,
+			setFunc = function(value) sam.savedVars.notis.CrashingWave = value end,
+		},
+	}
+
+	local cloudrestNotis = {
+		{
+			type = "description",
+			text = "Alerts available in Cloudrest",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Shocking Smash",
+			tooltip = "Shocking smash notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ShockingSmash end,
+			setFunc = function(value) sam.savedVars.notis.ShockingSmash = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Direct Current",
+			tooltip = "Direct current notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.DirectCurrent end,
+			setFunc = function(value) sam.savedVars.notis.DirectCurrent = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Nocturnal's Favor",
+			tooltip = "Nocturnal's favor (HA) notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.NocturnalsFavor end,
+			setFunc = function(value) sam.savedVars.notis.NocturnalsFavor = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Creeper Spawn",
+			tooltip = "Creeper spawn notification",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.Creeper end,
+			setFunc = function(value) sam.savedVars.notis.Creeper = value end,
+		},
+	}
+
 	local generalOptions = {
 		{
 			type = "divider",
@@ -206,6 +282,16 @@ function sam.buildMenu()
 			type = "submenu",
 			name = "General",
 			controls = generalNotis,
+		},
+		{
+			type = "submenu",
+			name = "Kynes Aegis",
+			controls = kynesNotis,
+		},
+		{
+			type = "submenu",
+			name = "Cloudrest",
+			controls = cloudrestNotis,
 		},
 		{
 			type = "submenu",

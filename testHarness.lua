@@ -7,6 +7,7 @@ SAMURAI = SAMURAI or { }
 TEST_HARNESS = TEST_HARNESS or { }
 local sam = SAMURAI
 local th = TEST_HARNESS
+local EM = GetEventManager()
 
 function th.registerNotiTest()
 	d("creating...")
@@ -64,8 +65,24 @@ function th.timedNotiTest()
 	d("done")
 end
 
+local function combatHandler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	sam.debug("source: %s %d, target: %s %d, result: %d", tostring(sourceName), sourceUnitId, tostring(targetName), targetUnitId, result)
+end
+
+function th.registerCombatHandler(state)
+	sam.debug("fired")
+	if state == "true" then
+		sam.debug("registering")
+		EM:RegisterForEvent("TestHarnessCombatHandler", EVENT_COMBAT_EVENT, combatHandler)
+	else
+		sam.debug("unregistering")
+		EM:UnregisterForEvent("TestHarnessCombatHandler", EVENT_COMBAT_EVENT)
+	end
+end
+
 function sam.setupTestHarness()
 	SLASH_COMMANDS["/registertimedtest"] = th.registerNotiTest
 	SLASH_COMMANDS["/unregistertimedtest"] = th.unregisterNotiTest
 	SLASH_COMMANDS["/testtimedalerts"] = th.timedNotiTest
+	SLASH_COMMANDS["/thcombatevents"] = th.registerCombatHandler
 end
