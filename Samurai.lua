@@ -4,7 +4,7 @@ local sam = SAMURAI
 local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "1.1"
+sam.version = "1.2"
 
 sam.dbug = false
 
@@ -37,7 +37,7 @@ sam.defaults = {
 		["NocturnalsFavor"] = true,
 		["Creeper"] = true,
 		["HeavyStrike"] = true,
-		["kaMeteor"] = true,
+		--["kaMeteor"] = true,
 	},
 }
 
