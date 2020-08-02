@@ -12,6 +12,8 @@ sam.LUNITS = LibUnits2
 
 sam.defaults = {
 	["debug"] = false,
+	["bossTimers"] = false,
+	["hideSubtitles"] = GetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED) == 0,
 	["notis"] = {
 		["Dive"] = true,
 		["TakingAim"] = true,
@@ -74,6 +76,33 @@ function sam.playerActivated()
 	end
 end
 
+local function bossLines()
+	if not sam.savedVars.bossTimers then return false end
+	local boss = false
+	local time = 0
+	local text = ZO_SubtitlesText:GetText()
+	if string.find(text, "Reprocessing yard contamination critical") then
+		boss = true
+		time = 10
+	elseif string.find(text, "Don't .... It's ... trap.") then
+		boss = true
+		time = 16.2
+	elseif string.find(text, "Have you not heard me? Have I not") then
+		boss = true
+		time = 26
+	elseif string.find(text, "There! Somethings coming through! Another fabricant!") then
+		boss = true
+		time = 8
+	--elseif string.find(text, "pinner") then
+	--	boss = true
+	--	time = 8
+	end
+	if boss then
+		sam.spawnTimer(time)
+	end
+	return sam.savedVars.hideSubtitles
+end
+
 function sam.init(e, addon)
 	if addon ~= sam.name then return end
 	EM:UnregisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED)
@@ -86,6 +115,8 @@ function sam.init(e, addon)
 	sam.onStartupNotificationSetup()
 	EM:RegisterForEvent(sam.name.."playerActivate", EVENT_PLAYER_ACTIVATED, sam.playerActivated)
 	sam.generalAlerts:Register()
+
+	ZO_PreHook(ZO_SubtitleManager, "FadeInSubtitle", bossLines)
 end
 
 EM:RegisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED, sam.init)

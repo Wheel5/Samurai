@@ -2,6 +2,29 @@ SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 local EM = GetEventManager()
 
+local spawnTimerFrame = nil
+local spawnTimerTime = 0
+
+local function spawnCountDown()
+	spawnTimerTime = spawnTimerTime - 0.1
+	if spawnTimerTime < 0 then
+		EM:UnregisterForUpdate(sam.name.."BossSpawn")
+		spawnTimerTime = 0
+		sam.UI.displayAlert(spawnTimerFrame, string.format("|c18ff08Boss:|r %.1f", spawnTimerTime))
+		--zo_callLater(function() sam.UI.hideAlert(spawnTimerFrame) end, 500)
+		sam.UI.hideAlert(spawnTimerFrame)
+		spawnTimerFrame = nil
+	else
+		sam.UI.displayAlert(spawnTimerFrame, string.format("|c18ff08Boss:|r %.1f", spawnTimerTime))
+	end
+end
+
+function sam.spawnTimer(seconds)
+	spawnTimerFrame = sam.UI.getAvailableNotificationFrame()
+	spawnTimerTime = seconds
+	EM:RegisterForUpdate(sam.name.."BossSpawn", 100, spawnCountDown)
+end
+
 local gen = sam.Instance:New(-1, nil, nil)
 
 

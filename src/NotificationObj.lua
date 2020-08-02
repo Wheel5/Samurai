@@ -156,7 +156,7 @@ function sam.TimerNotification:Initialize(name, color, text, event, result, IDs,
 end
 
 function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-	if not sam.savedVars.notis[self.name] then
+	if sam.savedVars.notis[self.name] ~= nil and not sam.savedVars.notis[self.name] then
 		sam.debug("skipping %s", self.name)
 		return
 	end
@@ -229,7 +229,8 @@ function sam.ActiveNotification:Initialize(customRegister, customUnregister, nam
 end
 
 function sam.ActiveNotification:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-	if not sam.savedVars.notis[self.name] then
+	--if not sam.savedVars.notis[self.name] then
+	if sam.savedVars.notis[self.name] ~= nil and not sam.savedVars.notis[self.name] then
 		sam.debug("skipping %s", self.name)
 		return
 	end

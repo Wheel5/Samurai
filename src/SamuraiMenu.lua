@@ -248,6 +248,40 @@ function sam.buildMenu()
 		},
 	}
 
+	local bossTimers = {
+		{
+			type = "divider",
+		},
+		{
+			type = "description",
+			text = "This adds a timer for the spawn in time before a boss is tangible to a number of trial bosses. When enabled, subtitles will be forced on in your settings, and you have an option here to hide them if you don't want to see them."
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Boss Timers",
+			tooltip = "Display a timer counting down to when a spawning boss can be hit",
+			width = "half",
+			getFunc = function() return sam.savedVars.bossTimers end,
+			setFunc = function(value)
+				if value then
+					SetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED, 1)
+				end
+				sam.savedVars.bossTimers = value
+			end,
+		},
+		{
+			type = "checkbox",
+			name = "Hide Subtitles",
+			tooltip = "When enabled, even if the boss timers setting is enabled, subtitles will remain hidden.",
+			width = "half",
+			getFunc = function() return sam.savedVars.hideSubtitles end,
+			setFunc = function(value) sam.savedVars.hideSubtitles = value end,
+		},
+	}
+
 	local generalOptions = {
 		{
 			type = "divider",
@@ -259,6 +293,14 @@ function sam.buildMenu()
 		{
 			type = "header",
 			name = "General Display Options",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "submenu",
+			name = "Boss Timers",
+			controls = bossTimers,
 		},
 		--{
 		--	type = "checkbox",
