@@ -1,5 +1,5 @@
 <GuiXml>
   <Controls>
-    <Label name="NotificationTemplate" text="" pixelRoundingEnabled="true" inheritAlpha="true" color="FFFFF" font="$(BOLD_FONT)|$(KB_36)|thick-outline" verticalAlignment="TOP" horizontalAlignment="CENTER" virtual="true" />
+    <Label name="NotificationTemplate" text="" pixelRoundingEnabled="true" inheritAlpha="true" color="FFFFF" font="$(BOLD_FONT)|$(KB_48)|thick-outline" verticalAlignment="TOP" horizontalAlignment="CENTER" virtual="true" />
   </Controls>
 </GuiXml>

@@ -295,6 +295,16 @@ function sam.buildMenu()
 			name = "General Display Options",
 		},
 		{
+			type = "checkbox",
+			name = "Lock Frames",
+			tooltip = "Unlock to position frames in desired location (notifications grow upwards, timed alerts grow downwards)",
+			getFunc = function() return lockUI end,
+			setFunc = function(value)
+				sam.UI.setHudDisplay(value)
+				lockUI = value
+			end,
+		},
+		{
 			type = "divider",
 		},
 		{
@@ -302,17 +312,6 @@ function sam.buildMenu()
 			name = "Boss Timers",
 			controls = bossTimers,
 		},
-		--{
-		--	type = "checkbox",
-		--	name = "Lock Frames",
-		--	tooltip = "Unlock to position frames in desired location",
-		--	disabled = true,
-		--	getFunc = function() return lockUI end,
-		--	setFunc = function(value)
-		--		sam.UI.setHudDisplay(value)
-		--		lockUI = value
-		--	end,
-		--},
 		{
 			type = "divider",
 		},

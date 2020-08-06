@@ -4,7 +4,7 @@ local sam = SAMURAI
 local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.0"
+sam.version = "2.2"
 
 sam.dbug = false
 
@@ -14,6 +14,10 @@ sam.defaults = {
 	["debug"] = false,
 	["bossTimers"] = false,
 	["hideSubtitles"] = GetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED) == 0,
+	["activeCenterX"] = 960,
+	["activeCenterY"] = 390,
+	["timedCenterX"] = 960,
+	["timedCenterY"] = 445.875,
 	["notis"] = {
 		["Dive"] = true,
 		["TakingAim"] = true,
@@ -39,7 +43,7 @@ sam.defaults = {
 		["NocturnalsFavor"] = true,
 		["Creeper"] = true,
 		["HeavyStrike"] = true,
-		--["kaMeteor"] = true,
+		--["kaMeteor"] = true, go away kabs
 	},
 }
 
@@ -83,19 +87,16 @@ local function bossLines()
 	local text = ZO_SubtitlesText:GetText()
 	if string.find(text, "Reprocessing yard contamination critical") then
 		boss = true
-		time = 10
+		time = 9.3
 	elseif string.find(text, "Don't .... It's ... trap.") then
 		boss = true
 		time = 16.2
-	elseif string.find(text, "Have you not heard me? Have I not") then
+	elseif string.find(text, "Have you not heard me%? Have I not") then
 		boss = true
 		time = 26
 	elseif string.find(text, "There! Somethings coming through! Another fabricant!") then
 		boss = true
-		time = 8
-	--elseif string.find(text, "pinner") then
-	--	boss = true
-	--	time = 8
+		time = 7.2
 	end
 	if boss then
 		sam.spawnTimer(time)
