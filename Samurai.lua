@@ -4,7 +4,7 @@ local sam = SAMURAI
 local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.2"
+sam.version = "2.3"
 
 sam.dbug = false
 
@@ -14,10 +14,14 @@ sam.defaults = {
 	["debug"] = false,
 	["bossTimers"] = false,
 	["hideSubtitles"] = GetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED) == 0,
-	["activeCenterX"] = 960,
-	["activeCenterY"] = 390,
-	["timedCenterX"] = 960,
-	["timedCenterY"] = 445.875,
+	["activeOffsetX"] = 0,
+	["activeOffsetY"] = -150,
+	["activePoint"] = CENTER,
+	["activeRelPoint"] = CENTER,
+	["timedOffsetX"] = 0,
+	["timedOffsetY"] = -120,
+	["timedPoint"] = TOP,
+	["timedRelPoint"] = CENTER,
 	["notis"] = {
 		["Dive"] = true,
 		["TakingAim"] = true,
@@ -90,10 +94,10 @@ local function bossLines()
 		time = 9.3
 	elseif string.find(text, "Don't .... It's ... trap.") then
 		boss = true
-		time = 16.2
+		time = 15.6
 	elseif string.find(text, "Have you not heard me%? Have I not") then
 		boss = true
-		time = 26
+		time = 24.4
 	elseif string.find(text, "There! Somethings coming through! Another fabricant!") then
 		boss = true
 		time = 7.2

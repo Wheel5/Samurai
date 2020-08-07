@@ -7,14 +7,21 @@ sam.UI = { }
 sam.UI.activeAlerts = { }
 
 function sam._onMoveStop()
-	local acx, acy = sam.UI.activeAlerts[1]:GetCenter()
-	local tcx, tcy = sam.UI.timedAlert:GetCenter()
+	local _, aPoint, _, aRelPoint, aOffX, aOffY = sam.UI.activeAlerts[1]:GetAnchor(0)
+	local _, tPoint, _, tRelPoint, tOffX, tOffY = sam.UI.timedAlert:GetAnchor(0)
+	--local acx, acy = sam.UI.activeAlerts[1]:GetCenter()
+	--local tcx, tcy = sam.UI.timedAlert:GetCenter()
 	--df("%f, %f", acx, acy)
 	--df("%f, %f", tcx, tcy)
-	sam.savedVars.activeCenterX = acx
-	sam.savedVars.activeCenterY = acy
-	sam.savedVars.timedCenterX = tcx
-	sam.savedVars.timedCenterY = tcy
+	sam.savedVars.activeOffsetX = aOffX
+	sam.savedVars.activeOffsetY = aOffY
+	sam.savedVars.activePoint = aPoint
+	sam.savedVars.activeRelPoint = aRelPoint
+
+	sam.savedVars.timedOffsetX = tOffX
+	sam.savedVars.timedOffsetY = tOffY
+	sam.savedVars.timedPoint = tPoint
+	sam.savedVars.timedRelPoint = tRelPoint
 end
 
 function sam.UI.spawnNotificationFrame()
@@ -77,12 +84,12 @@ function sam.buildDisplay()
 	window:SetResizeToFitDescendents(true)
 
 	local noti1 = WM:CreateControlFromVirtual("SAMURAI_NOTI_1", window, "NotificationTemplate")
-	noti1:SetAnchor(CENTER, window, TOPLEFT, sam.savedVars.activeCenterX, sam.savedVars.activeCenterY)
+	noti1:SetAnchor(sam.savedVars.activePoint, window, sam.savedVars.activeRelPoint, sam.savedVars.activeOffsetX, sam.savedVars.activeOffsetY)
 	noti1:SetHandler("OnMoveStop", function(...) sam._onMoveStop() end)
 	noti1:SetText("Notification #1")
 
 	local timedAlert = WM:CreateControlFromVirtual("SAMURAI_TIMED_ALERT", window, "NotificationTemplate")
-	timedAlert:SetAnchor(CENTER, window, TOPLEFT, sam.savedVars.timedCenterX, sam.savedVars.timedCenterY)
+	timedAlert:SetAnchor(sam.savedVars.timedPoint, window, sam.savedVars.timedRelPoint, sam.savedVars.timedOffsetX, sam.savedVars.timedOffsetY)
 	timedAlert:SetFont("$(BOLD_FONT)|$(KB_40)|thick-outline")
 	timedAlert:SetColor(1, 1, .25)
 	timedAlert:SetText("Timer Notification")
