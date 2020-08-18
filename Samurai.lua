@@ -4,7 +4,7 @@ local sam = SAMURAI
 local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.3"
+sam.version = "2.6"
 
 sam.dbug = false
 
@@ -12,8 +12,9 @@ sam.LUNITS = LibUnits2
 
 sam.defaults = {
 	["debug"] = false,
-	["bossTimers"] = false,
-	["hideSubtitles"] = GetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED) == 0,
+	["26bReset"] = false,
+	["bossTimers"] = true,
+	["hideSubtitles"] = GetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED) == 0, -- legacy
 	["activeOffsetX"] = 0,
 	["activeOffsetY"] = -150,
 	["activePoint"] = CENTER,
@@ -42,11 +43,18 @@ sam.defaults = {
 		["Rake"] = true, 
 		["WrathofTides"] = true, 
 		["CrashingWave"] = true, 
+		["Chaurus"] = false, 
+		["ChaurusInc"] = false, 
+		["StoneCurse"] = true, 
 		["ShockingSmash"] = true,
 		["DirectCurrent"] = true,
 		["NocturnalsFavor"] = true,
 		["Creeper"] = true,
 		["HeavyStrike"] = true,
+		["ssNegate"] = true,
+		["ssGale"] = true,
+		["ssIce"] = true,
+		["transApoc"] = true,
 		--["kaMeteor"] = true, go away kabs
 	},
 }
@@ -84,11 +92,11 @@ function sam.playerActivated()
 	end
 end
 
-local function bossLines()
+local function bossLines(text)
 	if not sam.savedVars.bossTimers then return false end
 	local boss = false
 	local time = 0
-	local text = ZO_SubtitlesText:GetText()
+	--local text = ZO_SubtitlesText:GetText()
 	if string.find(text, "Reprocessing yard contamination critical") then
 		boss = true
 		time = 9.3
@@ -101,11 +109,31 @@ local function bossLines()
 	elseif string.find(text, "There! Somethings coming through! Another fabricant!") then
 		boss = true
 		time = 7.2
+	elseif string.find(text, "The Celestial Mage summons me to") then
+		boss = true
+		time = 4.4
+	elseif string.find(text, "To restore the natural order%. To reclaim all that was and will be") then
+		boss = true
+		time = 21.2
 	end
 	if boss then
 		sam.spawnTimer(time)
 	end
-	return sam.savedVars.hideSubtitles
+	--return sam.savedVars.hideSubtitles
+end
+
+local channels = {
+	[CHAT_CHANNEL_MONSTER_EMOTE] = "CHAT_CHANNEL_MONSTER_EMOTE",
+	[CHAT_CHANNEL_MONSTER_SAY] = "CHAT_CHANNEL_MONSTER_SAY",
+	[CHAT_CHANNEL_MONSTER_WHISPER] = "CHAT_CHANNEL_MONSTER_WHISPER",
+	[CHAT_CHANNEL_MONSTER_YELL] = "CHAT_CHANNEL_MONSTER_YELL",
+}
+
+local function chatHandler(e, channelType, fromName, text, isCustomerSupport, fromDisplayName)
+	if channels[channelType] then
+		sam.debug("message received in channel: %s containing text: %s", channels[channelType], tostring(text))
+		bossLines(tostring(text))
+	end
 end
 
 function sam.init(e, addon)
@@ -121,7 +149,21 @@ function sam.init(e, addon)
 	EM:RegisterForEvent(sam.name.."playerActivate", EVENT_PLAYER_ACTIVATED, sam.playerActivated)
 	sam.generalAlerts:Register()
 
-	ZO_PreHook(ZO_SubtitleManager, "FadeInSubtitle", bossLines)
+	EM:RegisterForEvent(sam.name.."ChatHandler", EVENT_CHAT_MESSAGE_CHANNEL, chatHandler)
+	--ZO_PreHook(ZO_SubtitleManager, "FadeInSubtitle", bossLines)
+
+	-- old setting cleanup
+	if sam.savedVars.bossTimers and sam.savedVars.hideSubtitles then
+		sam.savedVars.hideSubtitles = false
+		zo_callLater(function()
+			SetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED, 0)
+		end, 3000)
+	end
+	
+	if not sam.savedVars["26bReset"] then
+		sam.savedVars.bossTimers = true
+		sam.savedVars["26bReset"] = true
+	end
 end
 
 EM:RegisterForEvent(sam.name.."Load", EVENT_ADD_ON_LOADED, sam.init)

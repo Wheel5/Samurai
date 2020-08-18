@@ -1,5 +1,6 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
+local EM = GetEventManager()
 
 sam.Instance = ZO_Object:Subclass()
 
@@ -39,6 +40,20 @@ function sam.Instance:Register()
 	for k,v in pairs(self.alerts) do
 		v:Register()
 	end
+	--EM:RegisterForEvent(sam.name.."CombatState"..tostring(self.zoneID), EVENT_PLAYER_COMBAT_STATE, function(e, inCombat)
+	--	sam.debug("combat state changed to: %s", tostring(inCombat))
+	--	if inCombat then
+	--		if self.startCombat then
+	--			sam.debug("firing startCombat handler")
+	--			self.startCombat()
+	--		end
+	--	else
+	--		if self.reset then
+	--			sam.debug("firing reset handler")
+	--			self.reset()
+	--		end
+	--	end
+	--end)
 	self.loaded = true
 end
 
@@ -48,6 +63,7 @@ function sam.Instance:Unregister()
 	for k,v in pairs(self.alerts) do
 		v:Unregister()
 	end
+	--EM:UnregisterForEvent(sam.name.."CombatState"..tostring(self.zoneID), EVENT_PLAYER_COMBAT_STATE)
 	self.loaded = false
 end
 

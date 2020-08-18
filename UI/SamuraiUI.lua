@@ -9,10 +9,6 @@ sam.UI.activeAlerts = { }
 function sam._onMoveStop()
 	local _, aPoint, _, aRelPoint, aOffX, aOffY = sam.UI.activeAlerts[1]:GetAnchor(0)
 	local _, tPoint, _, tRelPoint, tOffX, tOffY = sam.UI.timedAlert:GetAnchor(0)
-	--local acx, acy = sam.UI.activeAlerts[1]:GetCenter()
-	--local tcx, tcy = sam.UI.timedAlert:GetCenter()
-	--df("%f, %f", acx, acy)
-	--df("%f, %f", tcx, tcy)
 	sam.savedVars.activeOffsetX = aOffX
 	sam.savedVars.activeOffsetY = aOffY
 	sam.savedVars.activePoint = aPoint

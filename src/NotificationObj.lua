@@ -116,12 +116,6 @@ function sam.masterPrint()
 	end
 end
 
-local newID = 0
-local function getUniqueID()
-	newID = newID - 1
-	return newID
-end
-
 -- NOTIFICATION OBJECT PARENT
 sam.Notification = ZO_Object:Subclass()
 
@@ -161,10 +155,9 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 		return
 	end
 	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 100 then return end
-	sam.debug("handler fired for %s, targetPlayer is %s", self.name, tostring(self.targetPlayer))
+	sam.debug("handler fired for %s, result is %d, targetPlayer is %s", self.name, result, tostring(self.targetPlayer))
 
 	if result == self.result then
-		--if sourceUnitId == 0 then sourceUnitId = getUniqueID() end
 		if sourceUnitId == 0 then sourceUnitId = targetUnitId end
 		sam.debug("adding attack where source ID name is %s (%d), target ID name is %s (%d)", sam.LUNITS.GetNameForUnitId(sourceUnitId), sourceUnitId, sam.LUNITS.GetNameForUnitId(targetUnitId), targetUnitId)
 		timedAttackListMaster[self.name][3][sourceUnitId] = {GetGameTimeMilliseconds() + hitValue, targetUnitId}
@@ -274,7 +267,7 @@ function sam.ActiveNotification:Register()
 end
 
 function sam.ActiveNotification:Unregister()
-	sam.debug("registering active alert with name: %s", tostring(self.name))
+	sam.debug("unregistering active alert with name: %s", tostring(self.name))
 	if self.customUnregister then
 		self.customUnregister()
 	end

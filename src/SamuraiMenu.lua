@@ -204,6 +204,26 @@ function sam.buildMenu()
 			getFunc = function() return sam.savedVars.notis.CrashingWave end,
 			setFunc = function(value) sam.savedVars.notis.CrashingWave = value end,
 		},
+		{
+			type = "checkbox",
+			name = "Chaurus Totem Poison",
+			tooltip = "Alert for an incoming poison from the Chaurus totem (EXPERIMENTAL)",
+			width = "half",
+			disabled = true,
+			getFunc = function() return sam.savedVars.notis.Chaurus end,
+			setFunc = function(value)
+				sam.savedVars.notis.Chaurus = value
+				sam.savedVars.notis.ChaurusInc = value
+			end,
+		},
+		{
+			type = "checkbox",
+			name = "Gargoyle Totem Stone Curse",
+			tooltip = "Alert for an incoming stone curse from the gargoyle totem",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.StoneCurse end,
+			setFunc = function(value) sam.savedVars.notis.StoneCurse = value end,
+		},
 	}
 
 	local cloudrestNotis = {
@@ -248,13 +268,55 @@ function sam.buildMenu()
 		},
 	}
 
+	local sunspireNotis = {
+		{
+			type = "description",
+			text = "Alerts available in Sunspire",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Portal Negate",
+			tooltip = "Alert for an incoming negate on you in the Navi portal",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ssNegate end,
+			setFunc = function(value) sam.savedVars.notis.ssNegate = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Portal Gale",
+			tooltip = "Alert for an incoming Gale (knockback) on you in the Navi portal",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ssGale end,
+			setFunc = function(value) sam.savedVars.notis.ssGale = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Portal Ice",
+			tooltip = "Alert for an incoming ice comet on you in the Navi portal",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ssIce end,
+			setFunc = function(value) sam.savedVars.notis.ssIce = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Translation Apocalypse",
+			tooltip = "Alert to interrupt the Translation Apocalypse channel in the Navi portal",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.transApoc end,
+			setFunc = function(value) sam.savedVars.notis.transApoc = value end,
+		},
+	}
+
 	local bossTimers = {
 		{
 			type = "divider",
 		},
 		{
 			type = "description",
-			text = "This adds a timer for the spawn in time before a boss is tangible to a number of trial bosses. When enabled, subtitles will be forced on in your settings, and you have an option here to hide them if you don't want to see them."
+			text = "This adds a timer for the spawn in time before a boss is tangible to a number of trial bosses. This no longer requires subtitles to be enabled!"
 		},
 		{
 			type = "divider",
@@ -266,16 +328,17 @@ function sam.buildMenu()
 			width = "half",
 			getFunc = function() return sam.savedVars.bossTimers end,
 			setFunc = function(value)
-				if value then
-					SetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED, 1)
-				end
+				-- if value then
+				-- 	SetSetting(SETTING_TYPE_SUBTITLES, SUBTITLE_SETTING_ENABLED, 1)
+				-- end
 				sam.savedVars.bossTimers = value
 			end,
 		},
 		{
 			type = "checkbox",
 			name = "Hide Subtitles",
-			tooltip = "When enabled, even if the boss timers setting is enabled, subtitles will remain hidden.",
+			disabled = true,
+			tooltip = "No longer needed",
 			width = "half",
 			getFunc = function() return sam.savedVars.hideSubtitles end,
 			setFunc = function(value) sam.savedVars.hideSubtitles = value end,
@@ -333,6 +396,11 @@ function sam.buildMenu()
 			type = "submenu",
 			name = "Cloudrest",
 			controls = cloudrestNotis,
+		},
+		{
+			type = "submenu",
+			name = "Sunspire",
+			controls = sunspireNotis,
 		},
 		{
 			type = "submenu",
