@@ -4,7 +4,7 @@ local sam = SAMURAI
 local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.6"
+sam.version = "2.6.1"
 
 sam.dbug = false
 

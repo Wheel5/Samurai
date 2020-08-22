@@ -11,7 +11,7 @@ local apocString = "|cffdd00Wait:|r |cffffff%.1f|r"
 local function apocCountdown()
 	apocTime = apocTime - 100
 	if apocTime < 0 then apocTime = 0 end
-	if apocTime < 1000 then apocString.gsub("ffffff", "ff0000") end
+	if apocTime < 1000 then apocString:gsub("ffffff", "ff0000") end
 	sam.UI.displayAlert(apocFrame, string.format(apocString, apocTime/1000))
 	if apocTime == 0 then
 		EM:UnregisterForUpdate(sam.name.."transApocCountdown")
@@ -45,13 +45,27 @@ local function transApoc(eventCode, result, isError, abilityName, abilityGraphic
 	end
 end
 
+local function transition(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+	if targetType ~= COMBAT_UNIT_TYPE_PLAYER then return end
+	if result == ACTION_RESULT_EFFECT_FADED then
+		sam.debug("leaving portal")
+		EM:UnregisterForUpdate(sam.name.."transApocCountdown")
+		apocTime = 0
+		apocString = "|cffdd00Wait:|r %.1f"
+		sam.UI.hideAlert(apocFrame)
+	end
+end
+
 local function registerApoc()
 	EM:RegisterForEvent(sam.name.."TransApoc", EVENT_COMBAT_EVENT, transApoc)
 	EM:AddFilterForEvent(sam.name.."TransApoc", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121436)
+	EM:RegisterForEvent(sam.name.."Transition", EVENT_COMBAT_EVENT, transition)
+	EM:AddFilterForEvent(sam.name.."Transition", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 121216)
 end
 
 local function unregisterApoc()
 	EM:UnregisterForEvent(sam.name.."TransApoc", EVENT_COMBAT_EVENT)
+	EM:UnregisterForEvent(sam.name.."Transition", EVENT_COMBAT_EVENT)
 end
 
 ss:AddAlert(sam.ActiveNotification:New(registerApoc, unregisterApoc, "transApoc"))
