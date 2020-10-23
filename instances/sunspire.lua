@@ -1,6 +1,7 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
-local EM = GetEventManager()
+--local EM = GetEventManager()
+local EM = sam.EM
 
 local ss = sam.Instance:New(1121, nil, nil)
 

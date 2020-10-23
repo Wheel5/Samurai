@@ -1,6 +1,7 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
-local EM = GetEventManager()
+--local EM = GetEventManager()
+local EM = sam.EM
 
 local spawnTimerFrame = nil
 local spawnTimerTime = 0
@@ -20,6 +21,7 @@ local function spawnCountDown()
 end
 
 function sam.spawnTimer(seconds)
+	if spawnTimerFrame ~= nil then return end
 	spawnTimerFrame = sam.UI.getAvailableNotificationFrame()
 	spawnTimerTime = seconds
 	EM:RegisterForUpdate(sam.name.."BossSpawn", 100, spawnCountDown)
@@ -45,7 +47,7 @@ gen:AddAlert(sam.TimerNotification:New("ClashofBones", "00e5ff", "Clash", EVENT_
 gen:AddAlert(sam.TimerNotification:New("DrainResource", "00FF22", "Drain", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {54608}, true))
 
 gen:AddAlert(sam.ActiveNotification:New(nil, nil, "LavaGeyser", "ff3019", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {112063}, "Geyser, dodge!", 2000, true))
-gen:AddAlert(sam.ActiveNotification:New(nil, nil, "Rake", "00FFFF", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {111339}, "Hackwing Rake Incoming", 2000, false))
+gen:AddAlert(sam.ActiveNotification:New(nil, nil, "Rake", "00FFFF", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {111339}, "Hackwing Rake Inc", 2000, false))
 
 sam.generalAlerts = gen
 

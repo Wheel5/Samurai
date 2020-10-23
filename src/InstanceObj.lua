@@ -23,6 +23,10 @@ function sam.Instance:getZoneID()
 	return self.zoneID
 end
 
+function sam.Instance:getIsLoaded()
+	return self.loaded
+end
+
 function sam.Instance:Reset()
       	if self.reset then self.reset() end
 end

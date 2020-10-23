@@ -310,6 +310,42 @@ function sam.buildMenu()
 		},
 	}
 
+	local asylumNotis = {
+		{
+			type = "description",
+			text = "Alerts available in Asylum Sanctorium",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Boss Protected",
+			tooltip = "Alert for the boss becoming invulnerable from an Ordinated Protector",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.asBossProtected end,
+			setFunc = function(value) sam.savedVars.notis.asBossProtected = value end,
+		},
+	}
+
+	local hofNotis = {
+		{
+			type = "description",
+			text = "Alerts available in the Halls of Fabrication",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Shock Lash",
+			tooltip = "Alert for incoming shock lash attacks from the raptors",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.ShockLash end,
+			setFunc = function(value) sam.savedVars.notis.ShockLash = value end,
+		},
+	}
+
 	local bossTimers = {
 		{
 			type = "divider",
@@ -406,6 +442,16 @@ function sam.buildMenu()
 			type = "submenu",
 			name = "Blackrose Prison",
 			controls = blackroseNotis,
+		},
+		{
+			type = "submenu",
+			name = "Asylum Sanctorium",
+			controls = asylumNotis,
+		},
+		{
+			type = "submenu",
+			name = "Halls of Fabrication",
+			controls = hofNotis, 
 		},
 	}
 

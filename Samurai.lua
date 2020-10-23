@@ -1,10 +1,14 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 
-local EM = GetEventManager()
+--local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.6.1"
+sam.version = "2.9.0"
+
+sam.EM = EventCallbackManager and EventCallbackManager:New("SamuraiManager") or GetEventManager()
+local EM = sam.EM
+--sam.EM = GetEventManager()
 
 sam.dbug = false
 
@@ -55,6 +59,8 @@ sam.defaults = {
 		["ssGale"] = true,
 		["ssIce"] = true,
 		["transApoc"] = true,
+		["asBossProtected"] = true,
+		["ShockLash"] = false,
 		--["kaMeteor"] = true, go away kabs
 	},
 }
@@ -92,6 +98,20 @@ function sam.playerActivated()
 	end
 end
 
+function sam.fireInstanceCombatHandlers(e, inCombat)
+	for k,v in pairs(sam.instances) do
+		if v:getIsLoaded() then
+			if inCombat then
+				sam.debug("starting")
+				v:StartCombat()
+			else
+				sam.debug("resetting")
+				v:Reset()
+			end
+		end
+	end
+end
+
 local function bossLines(text)
 	if not sam.savedVars.bossTimers then return false end
 	local boss = false
@@ -115,6 +135,15 @@ local function bossLines(text)
 	elseif string.find(text, "To restore the natural order%. To reclaim all that was and will be") then
 		boss = true
 		time = 21.2
+	elseif string.find(text, "Feel that%? A chill breeze") then
+		boss = true
+		time = 22.3
+	elseif string.find(text, "we kept it hidden from our brethren and buried them with our tears") then
+		boss = true
+		time = 11
+	elseif string.find(text, "They shall not intrude much longer") then
+		boss = true
+		time = 5
 	end
 	if boss then
 		sam.spawnTimer(time)
@@ -150,6 +179,7 @@ function sam.init(e, addon)
 	sam.generalAlerts:Register()
 
 	EM:RegisterForEvent(sam.name.."ChatHandler", EVENT_CHAT_MESSAGE_CHANNEL, chatHandler)
+	EM:RegisterForEvent(sam.name.."CombatHandlers", EVENT_PLAYER_COMBAT_STATE, sam.fireInstanceCombatHandlers)
 	--ZO_PreHook(ZO_SubtitleManager, "FadeInSubtitle", bossLines)
 
 	-- old setting cleanup

@@ -108,7 +108,7 @@ local function clearMasterTable(e, inCombat)
 	end
 end
 
-EM:RegisterForEvent(sam.name.."clearTable", EVENT_PLAYER_COMBAT_STATE, clearMasterTable)
+sam.EM:RegisterForEvent(sam.name.."clearTable", EVENT_PLAYER_COMBAT_STATE, clearMasterTable)
 
 function sam.masterPrint()
 	for k,v in pairs(timedAttackListMaster) do
@@ -177,8 +177,8 @@ function sam.TimerNotification:Register()
 	end
 	timedAttackListMaster[self.name] = {self.text..": ", self.color, {} }
 	for k,v in pairs(self.IDs) do
-		EM:RegisterForEvent(sam.name..self.name..tostring(v), self.event, wrapper)
-		EM:AddFilterForEvent(sam.name..self.name..tostring(v), self.event, REGISTER_FILTER_ABILITY_ID, v)
+		sam.EM:RegisterForEvent(sam.name..self.name..tostring(v), self.event, wrapper)
+		sam.EM:AddFilterForEvent(sam.name..self.name..tostring(v), self.event, REGISTER_FILTER_ABILITY_ID, v)
 	end
 end
 
@@ -187,7 +187,7 @@ function sam.TimerNotification:Unregister()
 	EM:UnregisterForUpdate(sam.name.."TimedAttackCountdown")
 	timedAttackListMaster[self.name] = nil
 	for k,v in pairs(self.IDs) do
-		EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
+		sam.EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
 	end
 	for k,v in pairs(sam.UI.activeAlerts) do
 		v:SetHidden(true)
@@ -260,8 +260,8 @@ function sam.ActiveNotification:Register()
 			self:Handler(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
 		end
 		for k,v in pairs(self.IDs) do
-			EM:RegisterForEvent(sam.name..self.name..tostring(v), self.event, wrapper)
-			EM:AddFilterForEvent(sam.name..self.name..tostring(v), self.event, REGISTER_FILTER_ABILITY_ID, v)
+			sam.EM:RegisterForEvent(sam.name..self.name..tostring(v), self.event, wrapper)
+			sam.EM:AddFilterForEvent(sam.name..self.name..tostring(v), self.event, REGISTER_FILTER_ABILITY_ID, v)
 		end
 	end
 end
@@ -274,7 +274,7 @@ function sam.ActiveNotification:Unregister()
 	EM:UnregisterForUpdate(sam.name.."TimedAttackCountdown")
 	if self.IDs then
 	 	for k,v in pairs(self.IDs) do
-	 		EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
+	 		sam.EM:UnregisterForEvent(sam.name..self.name..tostring(v), self.event)
 	 	end
 	end
 	for k,v in pairs(sam.UI.activeAlerts) do
