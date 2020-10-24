@@ -27,6 +27,7 @@ local function spiderStun()
 end
 
 local function registerSpiderPull()
+	spiderPulled = false
 	EM:RegisterForEvent(sam.name.."hotSpiderPull", EVENT_COMBAT_EVENT, hotSpiderPull)
 	EM:AddFilterForEvent(sam.name.."hotSpiderPull", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 94805)
 
@@ -36,6 +37,7 @@ end
 
 local function unregisterSpiderPull()
 	EM:UnregisterForEvent(sam.name.."hotSpiderPull", EVENT_COMBAT_EVENT)
+	EM:UnregisterForEvent(sam.name.."spiderStun", EVENT_COMBAT_EVENT)
 end
 
 hof:AddAlert(sam.ActiveNotification:New(registerSpiderPull, unregisterSpiderPull, "spiderPull"))

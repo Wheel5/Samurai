@@ -4,7 +4,7 @@ local sam = SAMURAI
 --local EM = GetEventManager()
 
 sam.name = "Samurai"
-sam.version = "2.9.0"
+sam.version = "2.9.1"
 
 sam.EM = EventCallbackManager and EventCallbackManager:New("SamuraiManager") or GetEventManager()
 local EM = sam.EM

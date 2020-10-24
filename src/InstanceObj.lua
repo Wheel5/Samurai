@@ -7,7 +7,7 @@ sam.Instance = ZO_Object:Subclass()
 
 function sam.Instance:New(zoneID, startCombat, reset)
 	local instance = ZO_Object.New(self)
-	instance:Initialize(zoneID)
+	instance:Initialize(zoneID, startCombat, reset)
 	return instance
 end
 
