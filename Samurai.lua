@@ -1,14 +1,11 @@
 SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 
---local EM = GetEventManager()
-
 sam.name = "Samurai"
-sam.version = "2.9.1"
+sam.version = "2.10.0"
 
 sam.EM = EventCallbackManager and EventCallbackManager:New("SamuraiManager") or GetEventManager()
 local EM = sam.EM
---sam.EM = GetEventManager()
 
 sam.dbug = false
 
@@ -27,6 +24,11 @@ sam.defaults = {
 	["timedOffsetY"] = -120,
 	["timedPoint"] = TOP,
 	["timedRelPoint"] = CENTER,
+	["modules"] = {
+		["potions"] = {
+			["renameHeroism"] = true,
+		},
+	},
 	["notis"] = {
 		["Dive"] = true,
 		["TakingAim"] = true,
@@ -116,7 +118,6 @@ local function bossLines(text)
 	if not sam.savedVars.bossTimers then return false end
 	local boss = false
 	local time = 0
-	--local text = ZO_SubtitlesText:GetText()
 	if string.find(text, "Reprocessing yard contamination critical") then
 		boss = true
 		time = 9.3
@@ -148,7 +149,6 @@ local function bossLines(text)
 	if boss then
 		sam.spawnTimer(time)
 	end
-	--return sam.savedVars.hideSubtitles
 end
 
 local channels = {
@@ -180,7 +180,9 @@ function sam.init(e, addon)
 
 	EM:RegisterForEvent(sam.name.."ChatHandler", EVENT_CHAT_MESSAGE_CHANNEL, chatHandler)
 	EM:RegisterForEvent(sam.name.."CombatHandlers", EVENT_PLAYER_COMBAT_STATE, sam.fireInstanceCombatHandlers)
-	--ZO_PreHook(ZO_SubtitleManager, "FadeInSubtitle", bossLines)
+
+	-- setup modules
+	sam.setupPotionModule()
 
 	-- old setting cleanup
 	if sam.savedVars.bossTimers and sam.savedVars.hideSubtitles then

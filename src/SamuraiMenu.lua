@@ -14,7 +14,17 @@ function sam.buildMenu()
 		registerForRefresh = true,
 	}
 
+	local moduleData = {
+		type = "panel",
+		name = sam.name .. " Modules",
+		displayName = "|cffd000Samur|r.|cffe675ai|r Modules",
+		author = "|cc2ff19Wheels|r, |cef42ffMormo|r",
+		version = ""..sam.version,
+		registerForRefresh = true,
+	}
+
 	LAM:RegisterAddonPanel(sam.name.."GeneralOptions", panelData)
+	LAM:RegisterAddonPanel(sam.name.."ModuleOptions", moduleData)
 
 	local generalNotis = {
 		{
@@ -455,5 +465,44 @@ function sam.buildMenu()
 		},
 	}
 
+	local potionOptions = {
+		{
+			type = "description",
+			text = "Options to change how potions are displayed (currently, more to come)",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Rename Heroism Potions",
+			tooltip = "Stop heroism potions from being named generic potion names like 'Essence of Magicka'",
+			warning = "Will update on next zone change usually", 
+			width = "half",
+			getFunc = function() return sam.savedVars.modules.potions.renameHeroism end,
+			setFunc = function(value) sam.savedVars.modules.potions.renameHeroism = value end,
+		},
+	}
+
+	local moduleOptions = {
+		{
+			type = "divider",
+		},
+		{
+			type = "description",
+			text = "Individual module options will be accessible here as more are added",
+		},
+		{
+			type = "header",
+			name = "Module Options",
+		},
+		{
+			type = "submenu",
+			name = "Potions",
+			controls = potionOptions, 
+		},
+	}
+
 	LAM:RegisterOptionControls(sam.name.."GeneralOptions", generalOptions)
+	LAM:RegisterOptionControls(sam.name.."ModuleOptions", moduleOptions)
 end
