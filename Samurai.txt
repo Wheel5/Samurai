@@ -1,8 +1,8 @@
 ## Title: |cffd000Samur|r.|cffe675ai|r
 ## Description: stop dying 4head
 ## Author: |cc2ff19Wheels|r, |cef42ffMormo|r
-## Version: 2.10.0
-## APIVersion: 100032
+## Version: 2.12.0
+## APIVersion: 100033
 ## SavedVariables: SamuraiSavedVars
 ## DependsOn: LibAddonMenu-2.0 LibUnits2
 ## OptionalDependsOn: Testify

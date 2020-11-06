@@ -9,5 +9,6 @@ cr:AddAlert(sam.TimerNotification:New("DirectCurrent", "00caff", "Current", EVEN
 cr:AddAlert(sam.TimerNotification:New("NocturnalsFavor", "ca4fff", "Favor", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {104535}, true))
 
 cr:AddAlert(sam.ActiveNotification:New(nil, nil, "Creeper", "ff2e85", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {105016}, "Creeper spawning!", 2000, false))
+cr:AddAlert(sam.ActiveNotification:New(nil, nil, "IcyTeleport", "19d5ff", EVENT_COMBAT_EVENT, ACTION_RESULT_BEGIN, {106682}, "Incoming Teleport", 2000, true))
 
 table.insert(sam.instances, cr)

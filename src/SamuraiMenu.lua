@@ -276,6 +276,14 @@ function sam.buildMenu()
 			getFunc = function() return sam.savedVars.notis.Creeper end,
 			setFunc = function(value) sam.savedVars.notis.Creeper = value end,
 		},
+		{
+			type = "checkbox",
+			name = "Icy Teleport",
+			tooltip = "Notification for when Galenwe teleports onto you",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.IcyTeleport end,
+			setFunc = function(value) sam.savedVars.notis.IcyTeleport = value end,
+		},
 	}
 
 	local sunspireNotis = {
@@ -468,7 +476,7 @@ function sam.buildMenu()
 	local potionOptions = {
 		{
 			type = "description",
-			text = "Options to change how potions are displayed (currently, more to come)",
+			text = "Options to change how potions are displayed (currently, more to come)\nChanges to these settings iwll take effect on the next zone change.",
 		},
 		{
 			type = "divider",
@@ -477,10 +485,25 @@ function sam.buildMenu()
 			type = "checkbox",
 			name = "Rename Heroism Potions",
 			tooltip = "Stop heroism potions from being named generic potion names like 'Essence of Magicka'",
-			warning = "Will update on next zone change usually", 
 			width = "half",
 			getFunc = function() return sam.savedVars.modules.potions.renameHeroism end,
 			setFunc = function(value) sam.savedVars.modules.potions.renameHeroism = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Rename Tri-Pots",
+			tooltip = "Potions that give health, magicka, and stamina back will be renamed to Essence of Tri-Restoration",
+			width = "half",
+			getFunc = function() return sam.savedVars.modules.potions.renameTri end,
+			setFunc = function(value) sam.savedVars.modules.potions.renameTri = value end,
+		},
+		{
+			type = "checkbox",
+			name = "Rename Vitality Potions",
+			tooltip = "Potions that give health and major vitality will be renamed to Essence of Vitality",
+			width = "half",
+			getFunc = function() return sam.savedVars.modules.potions.renameVitality end,
+			setFunc = function(value) sam.savedVars.modules.potions.renameVitality = value end,
 		},
 	}
 

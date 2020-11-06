@@ -2,7 +2,7 @@ SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 
 sam.name = "Samurai"
-sam.version = "2.10.0"
+sam.version = "2.12.0"
 
 sam.EM = EventCallbackManager and EventCallbackManager:New("SamuraiManager") or GetEventManager()
 local EM = sam.EM
@@ -27,6 +27,8 @@ sam.defaults = {
 	["modules"] = {
 		["potions"] = {
 			["renameHeroism"] = true,
+			["renameTri"] = true,
+			["renameVitality"] = true,
 		},
 	},
 	["notis"] = {
@@ -63,6 +65,7 @@ sam.defaults = {
 		["transApoc"] = true,
 		["asBossProtected"] = true,
 		["ShockLash"] = false,
+		["IcyTeleport"] = false,
 		--["kaMeteor"] = true, go away kabs
 	},
 }
