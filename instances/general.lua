@@ -21,6 +21,7 @@ local function spawnCountDown()
 end
 
 function sam.spawnTimer(seconds)
+	if not sam.savedVars.bossTimers then return end
 	if spawnTimerFrame ~= nil then return end
 	spawnTimerFrame = sam.UI.getAvailableNotificationFrame()
 	spawnTimerTime = seconds

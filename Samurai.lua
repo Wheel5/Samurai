@@ -2,7 +2,7 @@ SAMURAI = SAMURAI or { }
 local sam = SAMURAI
 
 sam.name = "Samurai"
-sam.version = "2.12.0"
+sam.version = "2.14.0-beta"
 
 sam.EM = EventCallbackManager and EventCallbackManager:New("SamuraiManager") or GetEventManager()
 local EM = sam.EM
@@ -29,6 +29,9 @@ sam.defaults = {
 			["renameHeroism"] = true,
 			["renameTri"] = true,
 			["renameVitality"] = true,
+		},
+		["targetHealth"] = {
+			["show"] = false,
 		},
 	},
 	["notis"] = {
@@ -66,6 +69,8 @@ sam.defaults = {
 		["asBossProtected"] = true,
 		["ShockLash"] = false,
 		["IcyTeleport"] = false,
+		["creeperTarget"] = false,
+		["creeperStun"] = false,
 		--["kaMeteor"] = true, go away kabs
 	},
 }
@@ -186,6 +191,7 @@ function sam.init(e, addon)
 
 	-- setup modules
 	sam.setupPotionModule()
+	sam.setupTargetHealthModule()
 
 	-- old setting cleanup
 	if sam.savedVars.bossTimers and sam.savedVars.hideSubtitles then

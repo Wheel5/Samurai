@@ -154,7 +154,7 @@ function sam.TimerNotification:Handler(eventCode, result, isError, abilityName, 
 		sam.debug("skipping %s", self.name)
 		return
 	end
-	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 100 then return end
+	if (self.targetPlayer and targetType ~= COMBAT_UNIT_TYPE_PLAYER) or hitValue < 400 then return end -- testing more aggressive filtering, might have to make configurable
 	sam.debug("handler fired for %s, result is %d, targetPlayer is %s", self.name, result, tostring(self.targetPlayer))
 
 	if result == self.result then

@@ -278,6 +278,14 @@ function sam.buildMenu()
 		},
 		{
 			type = "checkbox",
+			name = "Creeper Target",
+			tooltip = "Alert for an incoming Creeper stun on you",
+			width = "half",
+			getFunc = function() return sam.savedVars.notis.creeperTarget end,
+			setFunc = function(value) sam.savedVars.notis.creeperTarget = value end,
+		},
+		{
+			type = "checkbox",
 			name = "Icy Teleport",
 			tooltip = "Notification for when Galenwe teleports onto you",
 			width = "half",
@@ -507,6 +515,23 @@ function sam.buildMenu()
 		},
 	}
 
+	local targetHealthOptions = {
+		{
+			type = "description",
+			text = "Target health display module (this pretty much duplicates what Combat Metronome displays)",
+		},
+		{
+			type = "divider",
+		},
+		{
+			type = "checkbox",
+			name = "Show Target Health",
+			tooltip = "Displays the current target's health as a percentage next to the reticle",
+			getFunc = function() return sam.savedVars.modules.targetHealth.show end,
+			setFunc = function(value) sam.savedVars.modules.targetHealth.show = value end,
+		},
+	}
+
 	local moduleOptions = {
 		{
 			type = "divider",
@@ -523,6 +548,11 @@ function sam.buildMenu()
 			type = "submenu",
 			name = "Potions",
 			controls = potionOptions, 
+		},
+		{
+			type = "submenu",
+			name = "Target Health",
+			controls = targetHealthOptions,
 		},
 	}
 

@@ -5,17 +5,19 @@ local EM = GetEventManager()
 sam.Instance = ZO_Object:Subclass()
 
 
-function sam.Instance:New(zoneID, startCombat, reset)
+function sam.Instance:New(zoneID, startCombat, reset, onLoad, onUnload)
 	local instance = ZO_Object.New(self)
-	instance:Initialize(zoneID, startCombat, reset)
+	instance:Initialize(zoneID, startCombat, reset, onLoad, onUnload)
 	return instance
 end
 
-function sam.Instance:Initialize(zoneID, startCombat, reset)
+function sam.Instance:Initialize(zoneID, startCombat, reset, onLoad, onUnload)
 	self.zoneID = zoneID
 	self.alerts = { }
 	self.startCombat = StartCombat
 	self.reset = reset
+	self.onLoad = onLoad
+	self.onUnload = onUnload
 	self.loaded = false
 end
 
@@ -41,6 +43,7 @@ end
 
 function sam.Instance:Register()
 	if self.loaded then return end -- don't double load
+	if self.onLoad then self.onLoad() end
 	for k,v in pairs(self.alerts) do
 		v:Register()
 	end
@@ -64,6 +67,7 @@ end
 function sam.Instance:Unregister()
 	if not self.loaded then return end -- only unregister if we have already registered for this instance
 	sam.debug("unloading zone %d", self.zoneID)
+	if self.onUnload then self.onUnload() end
 	for k,v in pairs(self.alerts) do
 		v:Unregister()
 	end
